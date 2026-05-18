@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -Wextra -std=c11 -Iinclude
 LIBS = -lSDL2
 
-SRC = src/main.c
+SRC = $(wildcard src/*.c)
 OUT = build/game
 
 all:
