@@ -36,6 +36,13 @@ bool initGame(Game* game) {
         game->player.width = 50; 
         game->player.height = 50;
 
+        game->enemy.x = rand() % (WINDOW_WIDTH - game->enemy.width);
+        game->enemy.y = 10;
+        game->enemy.width = 50;
+        game->enemy.height = 50;
+
+        game->bullet.active = false;
+
         return true;
     }
 
@@ -61,6 +68,13 @@ void handleEvents(Game* game) {
                 case SDLK_RIGHT:
                     game->input.right = true;
                     break;
+
+                case SDLK_SPACE:
+                    game->input.space = true;
+                    // if (!game->bullet.active) {
+                    //     onRelease(&game->bullet, &game->player);
+                    // }
+                    break;
                 case SDLK_ESCAPE:
                     game->running = 0;
                     break;
@@ -82,6 +96,12 @@ void handleEvents(Game* game) {
                 case SDLK_RIGHT:
                     game->input.right = false;
                     break;
+
+                case SDLK_SPACE:
+                    game->input.space = false;
+                    // game->bullet.active = false;
+                    // onRelease(&game->bullet, &game->player);
+                    break;
                 
                 }
             }
@@ -89,7 +109,9 @@ void handleEvents(Game* game) {
 }
         
 void updateGame(Game* game) {
-    updatePlayer(&game->player, &game->input);
+    updatePlayer(&game->player, &game->input, &game->bullet);
+    updateEnemy(&game->enemy, &game->player, &game->bullet);
+    updateBullet(&game->bullet);
 }
 
 void renderGame(Game* game) {
@@ -100,12 +122,33 @@ void renderGame(Game* game) {
         game->player.height
     };
 
+    SDL_Rect enemyRect = {
+        (int)game->enemy.x,
+        (int)game->enemy.y,
+        game->enemy.width,
+        game->enemy.height
+    };
+
+    SDL_Rect bulletRect = {
+        (int)game->bullet.x,
+        (int)game->bullet.y,
+        5,
+        10
+    };
+
     SDL_SetRenderDrawColor(game->renderer, 30, 30, 30, 255);
     SDL_RenderClear(game->renderer);
 
     SDL_SetRenderDrawColor(game->renderer, 230, 50, 50, 255);
     SDL_RenderFillRect(game->renderer, &playerRect);
 
+    SDL_SetRenderDrawColor(game->renderer, 50, 230, 50, 255);
+    SDL_RenderFillRect(game->renderer, &enemyRect);
+
+    if (game->bullet.active) {
+        SDL_SetRenderDrawColor(game->renderer, 255, 255, 0, 255);
+        SDL_RenderFillRect(game->renderer, &bulletRect);
+    }
 
     SDL_RenderPresent(game->renderer);
 }
