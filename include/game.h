@@ -5,6 +5,8 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+#define TARGET_FPS 60
+#define FIXED_DT (1.0 / TARGET_FPS)
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 #define WINDOW_TITLE "Air Fighters"
@@ -49,21 +51,23 @@ typedef struct {
     Player player;
     Enemy enemy;
     Bullet bullet;
+    Bullet enemyBullet;
 } Game;
 
 
 // initialize
 bool initGame(Game* game);
 
-//loop
+bool checkCollisions(Enemy* enemy, Player* player);
 void handleEvents(Game* game);
 void updateGame(Game* game);
 void renderGame(Game* game);
 void updatePlayer(Player* player, Input* input, Bullet* bullet);
-void updateEnemy(Enemy* enemy, Player* player, Bullet* bullet);
+void updateEnemy(Game* game);
 void fireBullet(Bullet* bullet, Player* player);
 void updateBullet(Bullet* bullet);
-
+void fireEnemyBullet(Game* game, Enemy* enemy);
+void updateEnemyBullet(Game* game);
 
 void destroyGame(Game* game);
 

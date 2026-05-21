@@ -17,3 +17,5 @@ void updateBullet(Bullet* bullet) {
         }
     }
 }
+
+

@@ -2,28 +2,32 @@
 #include <stdlib.h>
 #include <time.h>
 
-void updateEnemy(Enemy* enemy, Player* player, Bullet* bullet) {
-    if (enemy->x < player->x) {
-        enemy->x += ENEMY_MOVING_SPEED_X;
-    } else if (enemy->x > player->x) {
-        enemy->x -= ENEMY_MOVING_SPEED_X;
+void updateEnemy(Game* game) {
+    if (game->enemy.x < game->player.x) {
+        game->enemy.x += ENEMY_MOVING_SPEED_X;
+    } else if (game->enemy.x > game->player.x) {
+        game->enemy.x -= ENEMY_MOVING_SPEED_X;
     }
-    enemy->y += ENEMY_MOVING_SPEED_Y;
+    game->enemy.y += ENEMY_MOVING_SPEED_Y;
 
-    if (enemy->y > WINDOW_HEIGHT) {
-        enemy->x = rand() % (WINDOW_WIDTH - enemy->width);
-        enemy->y = 10;
+    if (game->enemy.y > WINDOW_HEIGHT) {
+        game->enemy.x = rand() % (WINDOW_WIDTH - game->enemy.width);
+        game->enemy.y = 10;
     }
 
-    if (bullet->active) {
-        if (bullet->x > enemy->x && bullet->x < enemy->x + enemy->width &&
-            bullet->y > enemy->y && bullet->y < enemy->y + enemy->height) {
+    if (game->bullet.active) {
+        if (game->bullet.x > game->enemy.x && game->bullet.x < game->enemy.x + game->enemy.width &&
+            game->bullet.y > game->enemy.y && game->bullet.y < game->enemy.y + game->enemy.height) {
     
-            enemy->x = rand() % (WINDOW_WIDTH - enemy->width);
-            enemy->y = 10;
+            game->enemy.x = rand() % (WINDOW_WIDTH - game->enemy.width);
+            game->enemy.y = 10;
             
 
-            bullet->active = false;
+            game->bullet.active = false;
         }
 }
+
+    if (rand() % 1000 < 5) { // 0.5% chance to fire each frame
+        fireEnemyBullet(game, &game->enemy);
+    }
 }

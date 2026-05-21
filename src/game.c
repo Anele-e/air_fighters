@@ -23,7 +23,7 @@ bool initGame(Game* game) {
         return false;
     }
 
-    game->renderer = SDL_CreateRenderer(game->window, -1, SDL_RENDERER_ACCELERATED);
+    game->renderer = SDL_CreateRenderer(game->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (game->renderer == NULL){
         printf("Window could not be created: SDL_Error: %s\n", SDL_GetError());
@@ -110,8 +110,14 @@ void handleEvents(Game* game) {
         
 void updateGame(Game* game) {
     updatePlayer(&game->player, &game->input, &game->bullet);
-    updateEnemy(&game->enemy, &game->player, &game->bullet);
+    updateEnemy(game);
+
     updateBullet(&game->bullet);
+    updateEnemyBullet(game);
+
+    if (checkCollisions(&game->enemy, &game->player)) {
+        game->running = false;
+    }
 }
 
 void renderGame(Game* game) {
